@@ -79,6 +79,31 @@ Once installed, this script adds customizable buttons to your ChatGPT interface,
 
 ---
 
+### Custom Button Configuration
+
+The script allows you to easily configure custom buttons to enhance the ChatGPT interface. You can modify the buttons, their icons, the text they insert, and whether they auto-send the message after the text is inserted. Separators can be used to visually organize buttons into groups.
+
+Below is the configuration for custom buttons:
+
+```javascript
+const customButtons = [
+    // Thinking and explanation buttons
+    { icon: '🧠', text: ' Before answering, write chain of thought...', autoSend: true },
+    { icon: '📚', text: ' Explain this concept or process in detail.', autoSend: true },
+    { icon: '🔄', text: ' Explain this in different words...', autoSend: true },
+    { separator: true }, // Separator for button grouping
+
+    // Text processing and information buttons
+    { icon: '🎓', text: ' This was text of my conspectus. Correct this...', autoSend: true },
+    { icon: '➕', text: ' Add additional information to this text.', autoSend: true },
+    { icon: '📊', text: ' Provide the maximum amount of useful details...', autoSend: true },
+    { separator: true }, // Another separator for grouping
+
+    // More buttons...
+];
+```
+
+
 ### Development and Contribution
 
 If you’d like to contribute, feel free to fork the repository and submit pull requests. Bug reports and feature requests are welcome through the issue tracker.
@@ -93,5 +118,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### Author
 
-Developed by **[Your Name]**.
+Developed by **Maxim Fomin**.
 
