@@ -25,7 +25,7 @@
 
         // Text processing and information buttons
         { icon: '🎓', text: ' This was text of my conspectus. Correct this conspectus. Start your response with a percentage of correctness, then explain what went wrong.', autoSend: true },
-        { icon: '➕', text: ' Add additional information to this text.', autoSend: true },
+        { icon: '➕', text: ' ... Add additional information to this text, speically continue form this point.', autoSend: true },
         { icon: '📊', text: ' Provide the maximum amount of useful details on this topic, ignoring any length restrictions.', autoSend: true },
         { icon: '🔍', text: ' Read this large chunk of text. Respond with "Acknowledged" for now. I will ask questions about this text later.', autoSend: true },
         { icon: '🌐', text: ' Perform a web search on this topic and provide an answer based on the results.', autoSend: true },
@@ -35,11 +35,12 @@
         { icon: '📋', text: ' Provide your next answer in a form of a table', autoSend: false },
         { icon: '💻', text: ' output ONLY CODE, not explanations', autoSend: true },
         { icon: '💬', text: ' Put all the explanation in code comments only!', autoSend: true },
+        { icon: '📝', text: ' Just check grammar in this text, and retype it correctly. Put corrected text in a code block. Explain grammatical errors found or state if none is found.', autoSend: true },
         { separator: true },
 
         // Language and style buttons
         { icon: '🇷🇺', text: ' Explain in Russian', autoSend: true },
-        { icon: '🔄', text: ' ok, just answer normally', autoSend: true },
+        { icon: '🔄', text: ' just answer normally', autoSend: true },
     ];
 
     // Function to wait for an element to be present in the DOM
