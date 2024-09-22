@@ -119,7 +119,7 @@ There are some issues that this code does not handle waiting well as well it doe
 
 ### License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. Feel free to use this FOSS.
 
 ---
 
