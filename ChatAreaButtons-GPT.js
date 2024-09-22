@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT Interface Modifications
 // @namespace    http://tampermonkey.net/
-// @version      1.4
+// @version      1.6
 // @description  Modify ChatGPT interface with improved send functionality, multiple custom buttons, and visual separators
 // @match        https://chat.openai.com/*
 // @match        https://chatgpt.com/*
@@ -60,9 +60,18 @@
         checkElement();
     }
 
+    // Function to check if modifications already exist
+    function modsExist() {
+        return document.querySelector('[data-testid^="custom-send-button-"]') !== null;
+    }
+
     // Function to initialize the script
     function init() {
         console.log('Initializing script...');
+        if (modsExist()) {
+            console.log('Modifications already exist. Skipping initialization.');
+            return;
+        }
         waitForElement('div.flex.w-full.flex-col.gap-1\\.5.rounded-\\[26px\\].p-1\\.5.transition-colors.bg-\\[\\#f4f4f4\\].dark\\:bg-token-main-surface-secondary', (targetDiv) => {
             console.log('Target div found:', targetDiv);
 
@@ -204,6 +213,39 @@
         }
     }
 
-    // Run the initialization
-    init();
+    // New function to wrap the initialization with a delay and check for existing modifications
+    function InitScript() {
+        console.log('InitScript called. Waiting 500ms before initialization...');
+        setTimeout(() => {
+            console.log('500ms delay completed. Checking for existing modifications...');
+            if (!modsExist()) {
+                console.log('No existing modifications found. Starting initialization...');
+                init();
+            } else {
+                console.log('Modifications already exist. Skipping initialization.');
+            }
+        }, 500);
+    }
+
+    // New function to handle path changes
+    function handlePathChange() {
+        console.log('Path change detected. Re-initializing script...');
+        InitScript();
+    }
+
+    // Set up path change detection using History API
+    function setupPathChangeDetection() {
+        const pushState = history.pushState;
+        history.pushState = function() {
+            pushState.apply(history, arguments);
+            handlePathChange();
+        };
+
+        window.addEventListener('popstate', handlePathChange);
+    }
+
+    // Run the initialization and set up path change detection
+    InitScript();
+    setupPathChangeDetection();
+
 })();
