@@ -18,7 +18,7 @@
     // Configuration
     const customButtons = [
         // Thinking and explanation buttons
-        { icon: '🧠', text: ' Before answering, write chain of thought, step by step, in <thinking> tag </thinking> then CRITICALLY review thinking in <crtics> tag, then write final answer, which should be pinnacle of thought', autoSend: true },
+        { icon: '🧠', text: ' Before answering, write chain of thought, step by step, in <thinking> tag </thinking> then CRITICALLY review thinking in <crtics> tag, then write horisontal line using markdow, then write final answer, which should be pinnacle of thought', autoSend: true },
         { icon: '📚', text: ' Explain this concept or process in detail.', autoSend: true },
         { icon: '🔄', text: ' Explain this in different words, possibly less technical.', autoSend: true },
         { separator: true },
