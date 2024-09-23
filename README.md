@@ -2,7 +2,7 @@
 
 ## Overview
 
-**ChatGPT Interface Modifications** is a Tampermonkey userscript designed to enhance the ChatGPT interface by adding buttons that append your text and send message. This script allows for automation of certain chat actions for a smoother user experience, for ewxample, you may add "think step by step" or "Thingk in a "thinking" tag to your messages with a single click of a button - and optionally autosend it if you want to - different setting for different button. For icons it simply uses emoji. Very simple and easy. Easy to modify and add your own buttons, just edit text in code! 
+**ChatGPT Interface Modifications** is a Tampermonkey userscript designed to enhance the ChatGPT interface by adding buttons that append your text and send message. This script allows for automation of certain chat actions for a smoother user experience, for example, you may add "think step by step" or "Think in a "thinking" tag to your messages with a single click of a button - and optionally autosend it if you want to - different setting for different button. For icons it simply uses emoji. Very simple and easy. Easy to modify and add your own buttons, just edit text in code! 
 
 ![Screenshot of the Main Operation](Documentation/Images/screenshot_main_operation.png)
 
