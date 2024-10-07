@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT Interface Modifications
 // @namespace    http://tampermonkey.net/
-// @version      1.6
+// @version      1.8
 // @description  Modify ChatGPT interface with improved send functionality, multiple custom buttons, and visual separators
 // @match        https://chat.openai.com/*
 // @match        https://chatgpt.com/*
@@ -13,20 +13,22 @@
     'use strict';
     // Instructions for AI: do not remove comments! MUST NOT REMOVE COMMENTS
     // This code edits the third-party website, adding custom buttons and modifying AI responses
-    // Therefore, references to external buttons and textareas should not be renamed!
+    // Therefore, references to external buttons and textarea should not be renamed!
 
     // Configuration
+    const enableShortcuts = true; // Set to false to disable keyboard shortcuts
+
     const customButtons = [
         // Thinking and explanation buttons
-        { icon: '🧠', text: ' Before answering, write chain of thought, step by step, in <thinking> tag </thinking> then CRITICALLY review thinking in <crtics> tag, then write horisontal line using markdow, then write final answer, which should be pinnacle of thought', autoSend: true },
+        { icon: '🧠', text: ' Before answering, write chain of thought, step by step, in <thinking> tag </thinking> then CRITICALLY review thinking in <critics> tag, then write horizontal line using markdown, then write final answer, which should be pinnacle of thought', autoSend: true },
         { icon: '📚', text: ' Explain this concept or process in detail.', autoSend: true },
         { icon: '🔄', text: ' Explain this in different words, possibly less technical.', autoSend: true },
         { separator: true },
 
         // Text processing and information buttons
         { icon: '🎓', text: ' This was text of my conspectus. Correct this conspectus. Start your response with a percentage of correctness, then explain what went wrong.', autoSend: true },
-        { icon: '➕', text: ' ... Add additional information to this text, speically continue form this point.', autoSend: true },
-        { icon: '📊', text: ' Provide the maximum amount of useful details on this topic, ignoring any length restrictions.', autoSend: true },
+        { icon: '➕', text: ' ... Add additional information to this text, specially continue from this point.', autoSend: true },
+        { icon: '🗜️', text: ' Provide a concise and focused explanation on this topic, answer directly to question', autoSend: true },
         { icon: '🔍', text: ' Read this large chunk of text. Respond with "Acknowledged" for now. I will ask questions about this text later.', autoSend: true },
         { icon: '🌐', text: ' Perform a web search on this topic and provide an answer based on the results.', autoSend: true },
         { separator: true },
@@ -106,16 +108,20 @@
 
     // Create custom send button
     function createCustomSendButton(buttonConfig, index) {
-        // Create a new button element
         const customButton = document.createElement('button');
-
-        // Set the inner HTML to an icon or text
         customButton.innerHTML = buttonConfig.icon;
-
-        // Set a data-testid attribute for identification
         customButton.setAttribute('data-testid', `custom-send-button-${index}`);
 
-        // Style the button
+        // Assign keyboard shortcuts to the first 10 non-separator buttons if shortcuts are enabled
+        let shortcutKey = null;
+        if (enableShortcuts && getShortcutKeyForIndex(index) !== null) {
+            shortcutKey = getShortcutKeyForIndex(index);
+            customButton.dataset.shortcutKey = shortcutKey.toString();
+        }
+
+        const shortcutText = shortcutKey !== null ? ` (Shortcut: Alt+${shortcutKey})` : '';
+        customButton.setAttribute('title', buttonConfig.text + shortcutText);
+
         customButton.style.cssText = `
             background-color: transparent;
             border: none;
@@ -126,11 +132,23 @@
             margin-bottom: 5px;
         `;
 
-        // Add click event listener to handle custom send action
         customButton.addEventListener('click', (event) => handleCustomSend(event, buttonConfig.text, buttonConfig.autoSend));
-        console.log(`Custom send button ${index + 1} event listener added.`);
 
         return customButton;
+    }
+
+    // New function to get the shortcut key for a given index, skipping separators
+    function getShortcutKeyForIndex(index) {
+        let shortcutCount = 0;
+        for (let i = 0; i < customButtons.length; i++) {
+            if (!customButtons[i].separator) {
+                shortcutCount++;
+                if (i === index && shortcutCount <= 10) {
+                    return shortcutCount % 10; // 0 represents 10
+                }
+            }
+        }
+        return null;
     }
 
     // Create separator
@@ -204,12 +222,26 @@
                     // Simulate a comprehensive click on the original send button
                     simulateClick(originalButton);
                     console.log('Original send button clicked.');
-                }, 50); // Delay that hopefully prevents bugs
+                }, 50); // Delay of 50 ms before sending
             } else {
                 console.log('Auto-send disabled for this button. Message not sent automatically.');
             }
         } else {
             console.error('Editor div or original send button not found. Cannot send message.');
+        }
+    }
+
+    // Function to handle keyboard shortcuts
+    function handleKeyboardShortcuts(event) {
+        if (!enableShortcuts) return;
+
+        if (event.altKey && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
+            const key = event.key === '0' ? '10' : event.key;
+            const button = document.querySelector(`button[data-shortcut-key="${key}"]`);
+            if (button) {
+                event.preventDefault();
+                button.click();
+            }
         }
     }
 
@@ -221,6 +253,12 @@
             if (!modsExist()) {
                 console.log('No existing modifications found. Starting initialization...');
                 init();
+
+                // Add event listener for keyboard shortcuts
+                if (enableShortcuts) {
+                    window.addEventListener('keydown', handleKeyboardShortcuts);
+                    console.log('Keyboard shortcuts enabled and event listener added.');
+                }
             } else {
                 console.log('Modifications already exist. Skipping initialization.');
             }
