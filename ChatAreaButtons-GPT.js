@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT Interface Modifications
 // @namespace    http://tampermonkey.net/
-// @version      2.2
+// @version      2.3
 // @description  Modify ChatGPT interface with improved send functionality, multiple custom buttons, visual separators, and auto-send & hotkeys toggle with resiliency mechanism
 // @match        https://chat.openai.com/*
 // @match        https://chatgpt.com/*
@@ -11,7 +11,7 @@
 
 (function() {
     'use strict';
-    // Instructions for AI: do not remove comments! MUST NOT REMOVE COMMENTS
+    // Instructions for AI: do not remove comments! MUST NOT REMOVE COMMENTS. Increment version by 0.1 upon changes.
     // This code edits the third-party website, adding custom buttons and modifying AI responses
     // Therefore, references to external buttons and textarea should not be renamed!
 
@@ -58,7 +58,7 @@
                 callback(element);
             } else if (++attempts >= maxAttempts) {
                 obs.disconnect();
-                console.error(`Element ${selector} not found after ${maxAttempts} attempts.`);
+                console.error(`[Chatgpt-Buttons] Element ${selector} not found after ${maxAttempts} attempts.`);
             }
         });
         observer.observe(document, { childList: true, subtree: true });
@@ -95,7 +95,7 @@
         checkbox.addEventListener('change', (event) => {
             onChangeCallback(event.target.checked);
             localStorage.setItem(id, event.target.checked);
-            console.log(`${labelText} ${event.target.checked ? 'enabled' : 'disabled'}`);
+            console.log(`[Chatgpt-Buttons] ${labelText} ${event.target.checked ? 'enabled' : 'disabled'}`);
         });
 
         return toggleContainer;
@@ -116,9 +116,9 @@
 
     // Function to initialize the script
     function init(enableResiliency = true) {
-        console.log('Initializing script...');
+        console.log('[Chatgpt-Buttons] Initializing script...');
         if (modsExist() && !enableResiliency) {
-            console.log('Modifications already exist. Skipping initialization.');
+            console.log('[Chatgpt-Buttons] Modifications already exist. Skipping initialization.');
             return;
         }
 
@@ -126,7 +126,7 @@
         loadToggleStates();
 
         waitForElement('div.flex.w-full.flex-col.gap-1\\.5.rounded-\\[26px\\].p-1\\.5.transition-colors.bg-\\[\\#f4f4f4\\].dark\\:bg-token-main-surface-secondary', (targetDiv) => {
-            console.log('Target div found:', targetDiv);
+            console.log('[Chatgpt-Buttons] Target div found:', targetDiv);
 
             // Create and add custom send buttons
             const customButtonsContainer = document.createElement('div');
@@ -143,11 +143,11 @@
                 if (buttonConfig.separator) {
                     const separator = createSeparator();
                     customButtonsContainer.appendChild(separator);
-                    console.log('Separator created and added');
+                    console.log('[Chatgpt-Buttons] Separator created and added');
                 } else {
                     const customSendButton = createCustomSendButton(buttonConfig, index);
                     customButtonsContainer.appendChild(customSendButton);
-                    console.log(`Custom send button ${index + 1} created:`, customSendButton);
+                    console.log(`[Chatgpt-Buttons] Custom send button ${index + 1} created:`, customSendButton);
                 }
             });
 
@@ -161,7 +161,7 @@
                 }
             );
             customButtonsContainer.appendChild(autoSendToggle);
-            console.log('Auto-send toggle created and added');
+            console.log('[Chatgpt-Buttons] Auto-send toggle created and added');
 
             // Add Hotkeys toggle
             const hotkeysToggle = createToggle(
@@ -173,11 +173,11 @@
                 }
             );
             customButtonsContainer.appendChild(hotkeysToggle);
-            console.log('Hotkeys toggle created and added');
+            console.log('[Chatgpt-Buttons] Hotkeys toggle created and added');
 
             // Insert the custom buttons container at the end of the target div
             targetDiv.appendChild(customButtonsContainer);
-            console.log('Custom send buttons, separators, auto-send toggle, and hotkeys toggle inserted into the DOM.');
+            console.log('[Chatgpt-Buttons] Custom send buttons, separators, auto-send toggle, and hotkeys toggle inserted into the DOM.');
 
             if (enableResiliency) {
                 // Start resiliency checks
@@ -258,7 +258,7 @@
 
     // Function to insert text into the editor by updating innerHTML and dispatching input event
     function insertTextIntoEditor(editorDiv, text) {
-        console.log('Attempting to insert text into the editor by updating innerHTML.');
+        console.log('[Chatgpt-Buttons] Attempting to insert text into the editor by updating innerHTML.');
         editorDiv.focus();
 
         // Escape HTML entities in the text
@@ -270,30 +270,30 @@
         // Dispatch an input event to notify React of the change
         const event = new Event('input', { bubbles: true });
         editorDiv.dispatchEvent(event);
-        console.log('Editor content updated and input event dispatched.');
+        console.log('[Chatgpt-Buttons] Editor content updated and input event dispatched.');
     }
 
     // Handle custom send button click
     function handleCustomSend(event, customText, autoSend) {
         event.preventDefault();
-        console.log('Custom send button clicked.');
+        console.log('[Chatgpt-Buttons] Custom send button clicked.');
 
         // Re-find the original send button
         const originalButton = document.querySelector('button[data-testid="send-button"][aria-label="Send prompt"]');
-        console.log('Original send button re-found:', originalButton);
+        console.log('[Chatgpt-Buttons] Original send button re-found:', originalButton);
 
         // Get the editor div where the user types the message
         const editorDiv = document.querySelector('#prompt-textarea');
-        console.log('Editor div found:', editorDiv);
+        console.log('[Chatgpt-Buttons] Editor div found:', editorDiv);
 
         if (editorDiv && originalButton) {
             // Get the current text from the editor
             const currentText = editorDiv.innerText.trim();
-            console.log('Current text in editor:', currentText);
+            console.log('[Chatgpt-Buttons] Current text in editor:', currentText);
 
             // Combine the current text with the custom text
             const combinedText = currentText + ' ' + customText;
-            console.log('Combined text to insert:', combinedText);
+            console.log('[Chatgpt-Buttons] Combined text to insert:', combinedText);
 
             // Insert the combined text into the editor
             insertTextIntoEditor(editorDiv, combinedText);
@@ -303,13 +303,13 @@
                 setTimeout(() => {
                     // Simulate a comprehensive click on the original send button
                     simulateClick(originalButton);
-                    console.log('Original send button clicked.');
+                    console.log('[Chatgpt-Buttons] Original send button clicked.');
                 }, 50); // Delay of 50 ms before sending
             } else {
-                console.log('Auto-send disabled. Message not sent automatically.');
+                console.log('[Chatgpt-Buttons] Auto-send disabled. Message not sent automatically.');
             }
         } else {
-            console.error('Editor div or original send button not found. Cannot send message.');
+            console.error('[Chatgpt-Buttons] Editor div or original send button not found. Cannot send message.');
         }
     }
 
@@ -335,18 +335,18 @@
 
         const resiliencyInterval = setInterval(() => {
             iterations++;
-            console.log(`Resiliency check iteration ${iterations}/${maxIterations}`);
+            console.log(`[Chatgpt-Buttons] Resiliency check iteration ${iterations}/${maxIterations}`);
 
             if (!modsExist()) {
-                console.warn('Custom elements are missing. Initiating resiliency enforcement.');
+                console.warn('[Chatgpt-Buttons] Custom elements are missing. Initiating resiliency enforcement.');
                 clearInterval(resiliencyInterval);
                 enforceResiliency();
             } else {
-                console.log('Custom elements are present.');
+                console.log('[Chatgpt-Buttons] Custom elements are present.');
             }
 
             if (iterations >= maxIterations) {
-                console.log('Resiliency checks completed without detecting missing elements.');
+                console.log('[Chatgpt-Buttons] Resiliency checks completed without detecting missing elements.');
                 clearInterval(resiliencyInterval);
             }
         }, intervalDuration);
@@ -354,33 +354,33 @@
 
     // Function to enforce resiliency by re-initializing without resiliency checks
     function enforceResiliency() {
-        console.log('EnforceResiliency called. Re-initializing without resiliency checks.');
+        console.log('[Chatgpt-Buttons] EnforceResiliency called. Re-initializing without resiliency checks.');
         init(false); // Initialize without resiliency checks
     }
 
     // Function to initialize the script with a delay and check for existing modifications
     function initScript() {
-        console.log('InitScript called. Waiting 500ms before initialization...');
+        console.log('[Chatgpt-Buttons] InitScript called. Waiting 500ms before initialization...');
         setTimeout(() => {
-            console.log('500ms delay completed. Checking for existing modifications...');
+            console.log('[Chatgpt-Buttons] 500ms delay completed. Checking for existing modifications...');
             if (!modsExist()) {
-                console.log('No existing modifications found. Starting initialization...');
+                console.log('[Chatgpt-Buttons] No existing modifications found. Starting initialization...');
                 init();
 
                 // Add event listener for keyboard shortcuts
                 if (enableShortcuts) {
                     window.addEventListener('keydown', handleKeyboardShortcuts);
-                    console.log('Keyboard shortcuts enabled and event listener added.');
+                    console.log('[Chatgpt-Buttons] Keyboard shortcuts enabled and event listener added.');
                 }
             } else {
-                console.log('Modifications already exist. Skipping initialization.');
+                console.log('[Chatgpt-Buttons] Modifications already exist. Skipping initialization.');
             }
         }, 500);
     }
 
     // Function to handle path changes
     function handlePathChange() {
-        console.log('Path change detected. Re-initializing script...');
+        console.log('[Chatgpt-Buttons] Path change detected. Re-initializing script...');
         initScript();
     }
 
